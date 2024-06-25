@@ -1,7 +1,29 @@
+import { Socket, io } from "socket.io-client";
 import { Github, Linkedin, Mail } from "lucide-react";
+import { MouseEvent, useEffect, useState } from "react";
+
 function App() {
+  const [s, setS] = useState<Socket>(io("ws://127.0.0.1:3000", {}));
+
+  useEffect(() => {
+    return () => {
+      s.disconnect();
+    };
+  }, []);
+
+  function handleMouseMove(e: MouseEvent) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    s.emit("move", { x, y });
+    console.log("emitted")
+  }
+
   return (
-    <div className="lg:max-w-7xl max-w-fit lg:mx-auto">
+    <div
+      className="lg:max-w-7xl max-w-fit lg:mx-auto"
+      onMouseMove={handleMouseMove}
+    >
       <div className="border-neutral border-2 w-fit rounded-2xl p-6  mt-16 space-y-2">
         <div className="[&>h1]:lg:text-3xl [&>h1]:text-2xl">
           <h1>Hi 👋</h1>
